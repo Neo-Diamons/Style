@@ -46,6 +46,6 @@ else
 fi
 
 if [ -f $EXPORT_FILE ]; then
-    ./style $EXPORT_FILE
+    $(dirname $(readlink -f $0))/style $EXPORT_FILE
     rm -f $EXPORT_FILE
 fi
