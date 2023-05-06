@@ -1,11 +1,16 @@
+##
+## EPITECH PROJECT, 2023
+## Style
+## File description:
+## .gitignore
+##
+
 # Folder
 .vscode
 .idea
 .obj
 doxygen
-
-# Files
-print.c
+build
 
 # Binaries
 unit_test
@@ -17,3 +22,11 @@ style
 *.a
 *.gcda
 *.gcno
+
+# Tmp files
+vgcore.*
+\#*
+~*
+
+# Unwanted files
+coding-style-reports.log

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+##
+## EPITECH PROJECT, 2023
+## Style
+## File description:
+## .gitignore
+##
+
 EXPORT_FILE="coding-style-reports.log"
 
 function cat_readme() {
@@ -15,7 +22,6 @@ function cat_readme() {
 function cat_version() {
     echo "Coding style checker version 1.0.0"
 }
-
 
 if [ $# -eq 1 ]; then
     if [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
