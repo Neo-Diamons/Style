@@ -14,15 +14,6 @@
     #define ALLOC_SIZE 4096
 
 //
-// Structs
-//
-
-static const char *ignore[] = {
-    "C-O1",
-    NULL
-};
-
-//
 // Functions
 //
 
@@ -32,6 +23,9 @@ char *get_file(char *filename);
 
 char **strsplit(char *str, char *delim);
 
-void destroy(char *buffer, char **tab);
+char **get_ignored(void);
+
+void destroy(char *buffer, char ***tabs);
+
 
 #endif /* !STYLE_STYLE_H */

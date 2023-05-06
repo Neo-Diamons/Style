@@ -8,13 +8,7 @@
 #include <malloc.h>
 #include <stdint.h>
 #include <string.h>
-
-void free_tab(char **tab)
-{
-    for (uint32_t i = 0 ; tab[i] ; i++)
-        free(tab[i]);
-    free(tab);
-}
+#include <stdbool.h>
 
 static uint32_t strsplit_count(char *str, char *delim, uint32_t delim_len)
 {
@@ -39,6 +33,16 @@ static uint32_t strsplit_len(char *str, char *delim, uint32_t delim_len)
     return i;
 }
 
+static bool strsplit_fill(char **tab, char *str, uint32_t len, uint32_t i)
+{
+    tab[i] = malloc(sizeof(char) * (len + 1));
+    if (!tab[i])
+        return false;
+    strncpy(tab[i], str, len);
+    tab[i][len] = '\0';
+    return true;
+}
+
 char **strsplit(char *str, char *delim)
 {
     uint32_t len;
@@ -50,11 +54,12 @@ char **strsplit(char *str, char *delim)
         return NULL;
     for (uint32_t i = 0; i < split_count; i++) {
         len = strsplit_len(str, delim, delim_len);
-        tab[i] = malloc(sizeof(char) * (len + 1));
-        if (!tab[i])
+        if (len == 0) {
+            split_count--;
+            continue;
+        }
+        if (!strsplit_fill(tab, str, len, i))
             return NULL;
-        strncpy(tab[i], str, len);
-        tab[i][len] = '\0';
         str += len + delim_len;
     }
     tab[split_count] = NULL;

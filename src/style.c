@@ -12,22 +12,22 @@
 
 #include "style.h"
 
-static bool is_ignore(char *error)
+static bool is_ignore(char **ignore, char *line)
 {
     for (uint8_t i = 0; ignore[i]; i++)
-        if (strstr(error, ignore[i]))
+        if (strstr(line, ignore[i]))
             return true;
     return false;
 }
 
-static void parse_line(char **lines, char *element, int color)
+static void parse_line(char **lines, char **ignore,char *element, int color)
 {
     char *c;
     char *error;
 
     for (uint32_t i = 0; lines[i]; i++) {
         error = strstr(lines[i], element);
-        if (!error || is_ignore(lines[i]))
+        if (!error || is_ignore(ignore, lines[i]))
             continue;
         c = strchr(lines[i], ':');
         *c = '\0';
@@ -42,12 +42,13 @@ bool style(char *filepath)
 {
     char *content = get_file(filepath);
     char **lines = (content) ? strsplit(content, "\n") : NULL;
+    char **ignore = (lines) ? get_ignored() : NULL;
 
-    if (!lines)
+    if (!ignore)
         return false;
-    parse_line(lines, "MAJOR", 31);
-    parse_line(lines, "MINOR", 93);
-    parse_line(lines, "INFO", 34);
-    destroy(content, lines);
+    parse_line(lines, ignore, "MAJOR", 31);
+    parse_line(lines, ignore, "MINOR", 93);
+    parse_line(lines, ignore, "INFO", 34);
+    destroy(content, (char **[]){lines, ignore, NULL});
     return true;
 }

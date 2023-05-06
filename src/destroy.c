@@ -15,8 +15,9 @@ static void free_tab(char **tab)
     free(tab);
 }
 
-void destroy(char *buffer, char **tab)
+void destroy(char *buffer, char ***tabs)
 {
     free(buffer);
-    free_tab(tab);
+    for (uint32_t i = 0; tabs[i]; i++)
+        free_tab(tabs[i]);
 }

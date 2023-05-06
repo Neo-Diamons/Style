@@ -15,6 +15,7 @@ SRC			:=	$(addprefix $(DIR),\
 				style.c				\
 				get_file.c			\
 				strsplit.c			\
+				get_ignored.c		\
 				destroy.c			\
 				)
 
