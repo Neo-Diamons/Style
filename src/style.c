@@ -6,48 +6,40 @@
 */
 
 #include <stdio.h>
-#include <stdint.h>
-#include <string.h>
 
 #include "style.h"
 
-static bool is_ignore(char **ignore, char *line)
+static void print_majors(parser_t *parser)
 {
-    for (uint8_t i = 0; ignore[i]; i++)
-        if (strstr(line, ignore[i]))
-            return true;
-    return false;
+    printf("\033[%im[%-5s:%s] \033[36m[Lines:%3s]\033[0m %s\n",
+        COLOR_RED, parser->type, parser->error, parser->line, parser->file);
 }
 
-static void parse_line(char **lines, char **ignore,char *element, int color)
+static void print_minors(parser_t *parser)
 {
-    char *c;
-    char *error;
+    printf("\033[%im[%-5s:%s] \033[36m[Lines:%3s]\033[0m %s\n",
+        COLOR_ORANGE, parser->type, parser->error, parser->line, parser->file);
+}
 
-    for (uint32_t i = 0; lines[i]; i++) {
-        error = strstr(lines[i], element);
-        if (!error || is_ignore(ignore, lines[i]))
-            continue;
-        c = strchr(lines[i], ':');
-        *c = '\0';
-        *strchr(++c, ':') = '\0';
-        printf("\033[%im[%-10s] \033[36m[Lines:%3s]\033[0m %s\n",
-            color, error, c, lines[i]);
-        lines[i][0] = '\0';
-    }
+static void print_infos(parser_t *parser)
+{
+    printf("\033[%im[%-5s:%s] \033[36m[Lines:%3s]\033[0m %s\n",
+        COLOR_BLUE, parser->type, parser->error, parser->line, parser->file);
 }
 
 bool style(char *filepath)
 {
-    char *content = get_file(filepath);
-    char **lines = (content) ? strsplit(content, "\n") : NULL;
-    char **ignore = (lines) ? get_ignored() : NULL;
+    errors_t *errors = get_errors(filepath);
 
-    if (!ignore)
+    if (!errors)
         return false;
-    parse_line(lines, ignore, "MAJOR", COLOR_RED);
-    parse_line(lines, ignore, "MINOR", COLOR_ORANGE);
-    parse_line(lines, ignore, "INFO", COLOR_BLUE);
-    destroy(content, (char **[]){lines, ignore, NULL});
+    if (!errors->major->head && !errors->minor->head && !errors->info->head)
+        return printf("\033[32mNo errors found.\033[0m\n") > 0;
+    for (list_node_t *major = errors->major->head; major; major = major->next)
+        print_majors((parser_t *)major->value);
+    for (list_node_t *minor = errors->minor->head; minor; minor = minor->next)
+        print_minors((parser_t *)minor->value);
+    for (list_node_t *info = errors->info->head; info; info = info->next)
+        print_infos((parser_t *)info->value);
     return true;
 }

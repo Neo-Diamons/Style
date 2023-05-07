@@ -18,6 +18,8 @@ SRC			:=	$(addprefix $(DIR),\
 				get_file.c			\
 				strsplit.c			\
 				get_ignored.c		\
+				get_errors.c		\
+				get_parser.c		\
 				destroy.c			\
 				)
 
