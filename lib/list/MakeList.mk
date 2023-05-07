@@ -18,4 +18,5 @@ SRC			+=	$(addprefix $(lastword $(DIR)),\
 				list_remove.c		\
 				list_remove_node.c	\
 				list_sort.c			\
+				list_func.c			\
 				)

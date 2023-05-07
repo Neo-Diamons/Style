@@ -38,7 +38,7 @@ D_ROOT_OBJ	:=	$(addprefix $(DIR_BUILD), debug/obj/lib/)
 D_OBJ		:=	$(patsubst %.c, $(D_ROOT_OBJ)%.o, $(SRC))
 DIR_OBJ		+=	$(addprefix $(D_ROOT_OBJ), $(DIR))
 
-all:				| $(DIR_OBJ) $(NAME)
+all:				$(DIR_OBJ) $(NAME)
 
 $(DIR_OBJ):
 	@mkdir -p $(DIR_OBJ)\
@@ -73,7 +73,7 @@ tests_run:			$(UNIT_TEST)
 
 debug:				CFLAGS += $(DEBUG)
 debug:				OBJ := $(D_OBJ)
-debug:				| $(DIR_OBJ) $(D_OBJ) $(NAME)
+debug:				$(DIR_OBJ) $(D_OBJ) $(NAME)
 
 clean:
 	@[ -d $(DIR_BUILD) ]\
