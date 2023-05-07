@@ -6,18 +6,21 @@
 */
 
 #include <malloc.h>
-#include <stdint.h>
 
-static void free_tab(char **tab)
+#include "style.h"
+
+void destroy_tab(char **tab)
 {
     for (uint32_t i = 0; tab[i]; i++)
         free(tab[i]);
     free(tab);
 }
 
-void destroy(char *buffer, char ***tabs)
+void destroy_errors(errors_t *errors)
 {
-    free(buffer);
-    for (uint32_t i = 0; tabs[i]; i++)
-        free_tab(tabs[i]);
+    list_destroy_node(MAJOR, free);
+    list_destroy_node(MINOR, free);
+    list_destroy_node(INFO, free);
+    destroy_tab(LINES);
+    free(errors);
 }

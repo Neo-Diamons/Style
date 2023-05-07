@@ -6,49 +6,46 @@
 */
 
 #include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
 
 #include "style.h"
 
-static bool is_ignore(char **ignore, char *line)
+static bool print_nb_errors(errors_t *errors)
 {
-    for (uint8_t i = 0; ignore[i]; i++)
-        if (strstr(line, ignore[i]))
-            return true;
-    return false;
+    return printf("\033[%imMAJOR\033[0m: %3lu "
+        "| \033[%imMINOR\033[0m: %3lu | \033[%imINFO\033[0m: %3lu\n",
+        COLOR_RED, MAJOR->size,
+        COLOR_ORANGE, MINOR->size,
+        COLOR_BLUE, INFO->size) > 0;
 }
 
-static void parse_line(char **lines, char **ignore,char *element, int color)
+static bool print_majors(parser_t *parser)
 {
-    char *c;
-    char *error;
+    return PRINT_ERROR(COLOR_RED) > 0;
+}
 
-    for (uint32_t i = 0; lines[i]; i++) {
-        error = strstr(lines[i], element);
-        if (!error || is_ignore(ignore, lines[i]))
-            continue;
-        c = strchr(lines[i], ':');
-        *c = '\0';
-        *strchr(++c, ':') = '\0';
-        printf("\033[%im[%-10s] \033[36m[Lines:%3s]\033[0m %s\n",
-            color, error, c, lines[i]);
-        lines[i][0] = '\0';
-    }
+static bool print_minors(parser_t *parser)
+{
+    return PRINT_ERROR(COLOR_ORANGE) > 0;
+}
+
+static bool print_infos(parser_t *parser)
+{
+    return PRINT_ERROR(COLOR_BLUE) > 0;
 }
 
 bool style(char *filepath)
 {
-    char *content = get_file(filepath);
-    char **lines = (content) ? strsplit(content, "\n") : NULL;
-    char **ignore = (lines) ? get_ignored() : NULL;
+    errors_t *errors = get_errors(filepath);
+    bool ret;
 
-    if (!ignore)
+    if (!errors)
         return false;
-    parse_line(lines, ignore, "MAJOR", 31);
-    parse_line(lines, ignore, "MINOR", 93);
-    parse_line(lines, ignore, "INFO", 34);
-    destroy(content, (char **[]){lines, ignore, NULL});
-    return true;
+    if (!errors->major->head && !errors->minor->head && !errors->info->head)
+        return printf("\033[32mNo errors found.\033[0m\n") > 0;
+    ret = print_nb_errors(errors)
+        && list_func(MAJOR, (bool (*)(void *))print_majors)
+        && list_func(MINOR, (bool (*)(void *))print_minors)
+        && list_func(INFO, (bool (*)(void *))print_infos);
+    destroy_errors(errors);
+    return ret;
 }

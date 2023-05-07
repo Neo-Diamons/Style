@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** Style
 ** File description:
-** style.c
+** main.c
 */
 
 #include "style.h"
