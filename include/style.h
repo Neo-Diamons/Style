@@ -11,7 +11,11 @@
     #include <stddef.h>
     #include <stdbool.h>
 
-    #define ALLOC_SIZE 4096
+    #define ALLOC_SIZE      4096
+
+    #define COLOR_RED       31
+    #define COLOR_ORANGE    93
+    #define COLOR_BLUE      34
 
 //
 // Functions
@@ -26,6 +30,5 @@ char **strsplit(char *str, char *delim);
 char **get_ignored(void);
 
 void destroy(char *buffer, char ***tabs);
-
 
 #endif /* !STYLE_STYLE_H */

@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "style.h"
 
@@ -46,9 +45,9 @@ bool style(char *filepath)
 
     if (!ignore)
         return false;
-    parse_line(lines, ignore, "MAJOR", 31);
-    parse_line(lines, ignore, "MINOR", 93);
-    parse_line(lines, ignore, "INFO", 34);
+    parse_line(lines, ignore, "MAJOR", COLOR_RED);
+    parse_line(lines, ignore, "MINOR", COLOR_ORANGE);
+    parse_line(lines, ignore, "INFO", COLOR_BLUE);
     destroy(content, (char **[]){lines, ignore, NULL});
     return true;
 }
