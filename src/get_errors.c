@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2022
-** style
+** Style
 ** File description:
 ** get_errors.c
 */
@@ -63,5 +63,12 @@ errors_t *get_errors(char *filepath)
     char **ignore = (lines) ? get_ignored() : NULL;
     errors_t *errors = (ignore) ? get_struct() : NULL;
 
-    return (errors && search_errors(errors, lines, ignore)) ? errors : NULL;
+    if (errors) {
+        errors->lines = lines;
+        errors = (search_errors(errors, lines, ignore)) ? errors : NULL;
+    } else
+        destroy_tab(lines);
+    destroy_tab(ignore);
+    free(content);
+    return errors;
 }

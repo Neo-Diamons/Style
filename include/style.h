@@ -30,23 +30,27 @@ typedef struct parser_s {
     char *error;
 } parser_t;
 
-    #define FILE    parser->file
-    #define LINE    parser->line
-    #define TYPE    parser->type
-    #define ERROR   parser->error
+    #define PFILE    parser->file
+    #define PLINE    parser->line
+    #define PTYPE    parser->type
+    #define PERROR   parser->error
 
     #define FORMAT  "\033[%im[%-5s:%s] \033[36m[Lines:%3s]\033[0m %s\n"
-    #define PRINT_ERROR(color)  printf(FORMAT, color, TYPE, ERROR, LINE, FILE)
+    #define PRINT_ERROR(color) \
+        printf(FORMAT, color, PTYPE, PERROR, PLINE, PFILE)
 
 typedef struct errors_s {
     list_t *major;
     list_t *minor;
     list_t *info;
+    char **lines;
 } errors_t;
 
     #define MAJOR   errors->major
     #define MINOR   errors->minor
     #define INFO    errors->info
+
+    #define LINES   errors->lines
 
 //
 // Functions
@@ -64,6 +68,8 @@ errors_t *get_errors(char *filepath);
 
 parser_t *get_parser(char *line);
 
-void destroy(char *buffer, char ***tabs);
+void destroy_tab(char **tab);
+
+void destroy_errors(errors_t *errors);
 
 #endif /* !STYLE_STYLE_H */

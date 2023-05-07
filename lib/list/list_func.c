@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2022
-** style
+** list
 ** File description:
 ** list_func.c
 */

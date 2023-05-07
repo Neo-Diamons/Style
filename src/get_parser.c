@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2022
-** style
+** Style
 ** File description:
 ** get_parser.c
 */

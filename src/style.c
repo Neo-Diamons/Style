@@ -36,13 +36,16 @@ static bool print_infos(parser_t *parser)
 bool style(char *filepath)
 {
     errors_t *errors = get_errors(filepath);
+    bool ret;
 
     if (!errors)
         return false;
     if (!errors->major->head && !errors->minor->head && !errors->info->head)
         return printf("\033[32mNo errors found.\033[0m\n") > 0;
-    return print_nb_errors(errors)
+    ret = print_nb_errors(errors)
         && list_func(MAJOR, (bool (*)(void *))print_majors)
         && list_func(MINOR, (bool (*)(void *))print_minors)
         && list_func(INFO, (bool (*)(void *))print_infos);
+    destroy_errors(errors);
+    return ret;
 }
