@@ -67,7 +67,7 @@ errors_t *get_errors(char *filepath)
         errors->lines = lines;
         errors = (search_errors(errors, lines, ignore)) ? errors : NULL;
     } else
-        destroy_tab(lines);
+        return NULL;
     destroy_tab(ignore);
     free(content);
     return errors;
