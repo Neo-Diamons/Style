@@ -56,18 +56,18 @@ static bool search_errors(errors_t *errors, char **lines, char **ignore)
     return true;
 }
 
-errors_t *get_errors(char *filepath)
+errors_t *get_errors(char *path, char *filepath)
 {
     char *content = get_file(filepath);
     char **lines = (content) ? strsplit(content, "\n") : NULL;
-    char **ignore = (lines) ? get_ignored() : NULL;
+    char **ignore = (lines) ? get_ignored(path) : NULL;
     errors_t *errors = (ignore) ? get_struct() : NULL;
 
     if (errors) {
         errors->lines = lines;
         errors = (search_errors(errors, lines, ignore)) ? errors : NULL;
     } else
-        destroy_tab(lines);
+        return NULL;
     destroy_tab(ignore);
     free(content);
     return errors;

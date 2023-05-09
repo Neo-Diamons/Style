@@ -56,15 +56,17 @@ typedef struct errors_s {
 // Functions
 //
 
-bool style(char *filepath);
+bool style(char *path, char *filepath);
 
 char *get_file(char *filename);
 
+char *get_content(char *filepath);
+
 char **strsplit(char *str, char *delim);
 
-char **get_ignored(void);
+char **get_ignored(char *path);
 
-errors_t *get_errors(char *filepath);
+errors_t *get_errors(char *path, char *filepath);
 
 parser_t *get_parser(char *line);
 

@@ -33,9 +33,9 @@ static bool print_infos(parser_t *parser)
     return PRINT_ERROR(COLOR_BLUE) > 0;
 }
 
-bool style(char *filepath)
+bool style(char *path, char *filepath)
 {
-    errors_t *errors = get_errors(filepath);
+    errors_t *errors = get_errors(path, filepath);
     bool ret;
 
     if (!errors)

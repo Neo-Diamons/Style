@@ -9,5 +9,5 @@
 
 int main(int ac, char **av)
 {
-    return (ac == 2 && style(av[1])) ? 0 : 84;
+    return (ac == 3 && style(av[1], av[2])) ? 0 : 84;
 }

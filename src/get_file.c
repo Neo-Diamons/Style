@@ -21,7 +21,7 @@ static char *get_filepath(char *filepath, char *filename)
     return filepath;
 }
 
-static char *get_content(char *filepath)
+char *get_content(char *filepath)
 {
     FILE *file = fopen(filepath, "r");
     struct stat st;
