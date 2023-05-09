@@ -9,11 +9,15 @@
 
 #include "style.h"
 
-char **get_ignored(void)
+char **get_ignored(char *path)
 {
-    char *content = get_file(".styleignore");
-    char **lines = (content) ? strsplit(content, "\n") : NULL;
+    char filepath[ALLOC_SIZE];
+    char *content;
+    char **lines;
 
+    snprintf(filepath, ALLOC_SIZE, "%s/.styleignore", path);
+    content = get_file(filepath);
+    lines = (content) ? strsplit(content, "\n") : NULL;
     if (!lines)
         return NULL;
     free(content);
