@@ -1,57 +1,59 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-##
-## EPITECH PROJECT, 2023
-## Style
-## File description:
-## .gitignore
-##
+# Get script location folder
+SOURCE=${BASH_SOURCE[0]}
+while [ -L "$SOURCE" ]; do
+  DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
+  SOURCE=$(readlink "$SOURCE")
+  [[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE
+done
+DIR=$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)
 
-EXPORT_FILE="coding-style-reports.log"
+# Init path to file
+CODING_STYLE="$DIR/coding-style.sh"
+REPORTS="$DIR/reports.log"
+REPORTS_CLEAN="$DIR/reports-clean.log"
 
-function cat_readme() {
-    echo "Usage: ./style.sh [OPTION]..."
-    echo "Check the coding style of your project."
-    echo ""
-    echo "Options:"
-    echo "  -u, --update    Update the coding style checker."
-    echo "  -v, --version   Display the coding style checker version."
-    echo "  -h, --help      Display this help and exit."
-}
+# Fetch default coding style
+$CODING_STYLE . . >/dev/null
+mv -f "$(pwd)/coding-style-reports.log" $REPORTS
 
-function cat_version() {
-    echo "Coding style checker version 1.0.0"
-}
+# Skip ignored file from the .gitignore
+FILTER="$(cat $REPORTS)"
+while read l; do
+  if [ "${l:0:1}" = "#" ] || [ -z "$l" ]; then
+    continue
+  fi
+  FILTER="$(echo "$FILTER" | grep -v "^./$l")"
+done < "$(pwd)/.gitignore"
 
-if [ $# -eq 1 ]; then
-    if [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
-        sudo docker pull ghcr.io/epitech/coding-style-checker:latest && sudo docker image prune -f
-        exit 0
+# Improve human readability
+while true; do
+  l="$(echo "$FILTER" | head -1)"
+  if [ -z "$l" ]; then
+    break
+  fi
+  ERROR="$(echo "$l" | cut -d ":" -f 3,4 | cut -c2-)"
+  
+  FILE="$(echo "$FILTER" | grep "$ERROR" | awk -F ":" '{ printf "  l%-5s %s\n", $2, $1 }')"   
+  FILTER="$(echo "$FILTER" | grep -v "$ERROR")"
+  
+  # Set the color depending of the error type
+  case "$(echo "$ERROR" | cut -d ":" -f 1)" in
+    "FATAL") COLOR="\033[35m"
+    ;;
+    "MAJOR") COLOR="\033[31m"
+    ;;
+    "MINOR") COLOR="\033[93m"
+    ;;
+    "INFO") COLOR="\033[34m"
+    ;;
+  esac
 
-    elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-        cat_readme
-        exit 0
+  CLEAN="$(printf "$CLEAN\n\n$(echo "$ERROR" | awk -F ":" -v COLOR="$COLOR" '{ printf "%s[%-5s %s]\033[0m", COLOR, $1, $2 }')\n$FILE")"
+done
 
-    elif [ "$1" == "-v" ] || [ "$1" == "--version" ]; then
-        cat_version
-        exit 0
+# Set to report
+echo "$CLEAN" | tail -n +3 > $REPORTS_CLEAN
+cat $REPORTS_CLEAN
 
-    else
-        cat_readme
-        exit 1
-    fi
-
-else
-    if [ $# -ne 0 ]; then
-        cat_readme
-        exit 1
-
-    else
-        docker run --rm -i -v ".":"/mnt/delivery" -v ".":"/mnt/reports" ghcr.io/epitech/coding-style-checker:latest "/mnt/delivery" "/mnt/reports"
-    fi
-fi
-
-if [ -f $EXPORT_FILE ]; then
-    $(dirname $(readlink -f $0))/style $(dirname $(readlink -f $0)) $EXPORT_FILE
-    rm -f $EXPORT_FILE
-fi

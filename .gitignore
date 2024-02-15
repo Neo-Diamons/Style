@@ -1,32 +1,4 @@
-##
-## EPITECH PROJECT, 2023
-## Style
-## File description:
-## .gitignore
-##
+# Generated files
 
-# Folder
-.vscode
-.idea
-.obj
-doxygen
-build
+*.log
 
-# Binaries
-unit_test
-a.out
-style
-
-# Extension
-*.o
-*.a
-*.gcda
-*.gcno
-
-# Tmp files
-vgcore.*
-\#*
-~*
-
-# Unwanted files
-coding-style-reports.log
