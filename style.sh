@@ -54,6 +54,10 @@ while true; do
 done
 
 # Set to report
-echo "$CLEAN" | tail -n +3 > $REPORTS_CLEAN
+if [ ! "" = "$CLEAN" ]; then
+  echo "$CLEAN" | tail -n +3 > $REPORTS_CLEAN
+else
+  echo -e "\033[32mNo coding style error found\033[0m" > $REPORTS_CLEAN
+fi
 cat $REPORTS_CLEAN
 
