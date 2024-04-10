@@ -19,13 +19,7 @@ $CODING_STYLE . . >/dev/null
 mv -f "$(pwd)/coding-style-reports.log" $REPORTS
 
 # Skip ignored file from the .gitignore
-FILTER="$(cat $REPORTS)"
-while read l; do
-  if [ "${l:0:1}" = "#" ] || [ -z "$l" ]; then
-    continue
-  fi
-  FILTER="$(echo "$FILTER" | grep -v "^./$l")"
-done < "$(pwd)/.gitignore"
+FILTER="$(cat $REPORTS | grep "$(git status --short| grep  '^?' | cut -d\  -f2- | git ls-files)")"
 
 # Improve human readability
 while true; do
@@ -34,10 +28,10 @@ while true; do
     break
   fi
   ERROR="$(echo "$l" | cut -d ":" -f 3,4 | cut -c2-)"
-  
-  FILE="$(echo "$FILTER" | grep "$ERROR" | awk -F ":" '{ printf "  l%-5s %s\n", $2, $1 }')"   
+
+  FILE="$(echo "$FILTER" | grep "$ERROR" | awk -F ":" '{ printf "  l%-5s %s\n", $2, $1 }')"
   FILTER="$(echo "$FILTER" | grep -v "$ERROR")"
-  
+
   # Set the color depending of the error type
   case "$(echo "$ERROR" | cut -d ":" -f 1)" in
     "FATAL") COLOR="\033[35m"
@@ -60,4 +54,3 @@ else
   echo -e "\033[32mNo coding style error found\033[0m" > $REPORTS_CLEAN
 fi
 cat $REPORTS_CLEAN
-
