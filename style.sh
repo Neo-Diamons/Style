@@ -14,14 +14,39 @@ CODING_STYLE="$DIR/coding-style.sh"
 REPORTS="$DIR/reports.log"
 REPORTS_CLEAN="$DIR/reports-clean.log"
 
+# Ensure Docker is installed
+if ! command -v docker &> /dev/null; then
+  echo "Docker is not installed. Please install Docker first."
+  exit 1
+fi
+
+# Ensure Docker is running
+if ! sudo systemctl is-active --quiet docker; then
+  echo "Starting Docker..."
+  sudo systemctl start docker
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+fi
+
 # Fetch default coding style
+echo "Fetching latest coding style..."
 $CODING_STYLE . . >/dev/null
+if [ $? -ne 0 ]; then
+  exit 1
+fi
 mv -f "$(pwd)/coding-style-reports.log" $REPORTS
 
 # Skip ignored file from the .gitignore
-FILTER="$(cat $REPORTS | grep "$(git status --short| grep  '^?' | cut -d\  -f2- | git ls-files)")"
+git rev-parse --git-dir > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+  FILTER="$(cat $REPORTS | grep "$(git status --short| grep  '^?' | cut -d\  -f2- | git ls-files)")"
+else
+  FILTER="$(cat $REPORTS)"
+fi
 
 # Improve human readability
+echo "Cleaning reports..."
 while true; do
   l="$(echo "$FILTER" | head -1)"
   if [ -z "$l" ]; then
@@ -54,3 +79,4 @@ else
   echo -e "\033[32mNo coding style error found\033[0m" > $REPORTS_CLEAN
 fi
 cat $REPORTS_CLEAN
+
